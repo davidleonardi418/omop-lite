@@ -122,6 +122,8 @@ CREATE INDEX idx_source_to_concept_map_c ON @cdmDatabaseSchema.source_to_concept
 CREATE INDEX idx_drug_strength_id_1  ON @cdmDatabaseSchema.drug_strength  (drug_concept_id ASC);
 CLUSTER @cdmDatabaseSchema.drug_strength  USING idx_drug_strength_id_1 ;
 CREATE INDEX idx_drug_strength_id_2 ON @cdmDatabaseSchema.drug_strength (ingredient_concept_id ASC);
+--Additional full text search index
+CREATE INDEX idx_concept_fts ON @cdmDatabaseSchema.concept USING GIN (concept_fts);
 --Additional v6.0 indices
 --CREATE CLUSTERED INDEX idx_survey_person_id_1 ON @cdmDatabaseSchema.survey_conduct (person_id ASC);
 --CREATE CLUSTERED INDEX idx_episode_person_id_1 ON @cdmDatabaseSchema.episode (person_id ASC);
