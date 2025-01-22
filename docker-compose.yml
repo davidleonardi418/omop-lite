@@ -1,7 +1,15 @@
-name: omop-lite
+name: omop-ts
 
 services:
-  omop-lite:
+   omop-ts:
+    image: pgvector/pgvector:pg17
+    environment:
+      - POSTGRES_DB=omop
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+   
+   omop-lite:
     build:
       context: .
       dockerfile: Dockerfile
@@ -10,12 +18,22 @@ services:
     volumes:
       - ./vocabs:/vocabs
     depends_on:
-      - db
+      - omop-ts
+   
+   embeddings:
+     build:
+       context: ./embeddings
+       dockerfile: Dockerfile
+     environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - DB_NAME=omop
+      - SCHEMA_NAME=cdm
+     volumes:
+       - ./embeddings:/embeddings
+     depends_on:
+       omop-lite:
+         - service_completed_successfully
 
-  db:
-    image: postgres:latest
-    environment:
-      - POSTGRES_DB=omop
-      - POSTGRES_PASSWORD=password
-    ports:
-      - "5432:5432"
