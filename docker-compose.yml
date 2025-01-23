@@ -8,7 +8,7 @@ services:
     environment:
       - SCHEMA_NAME=cdm
     volumes:
-      - ./vocabs:/vocabs
+      - ./data:/data
     depends_on:
       - db
 

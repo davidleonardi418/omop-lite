@@ -1,8 +1,8 @@
 # omop-lite
 
-A small container to get an OMOP CDM Vocabulary Postgres database running quickly.
+A small container to get an OMOP CDM Postgres database running quickly.
 
-Drop your Vocabularies into `vocabs/`, and run the container.
+Drop your data into `data/`, and run the container.
 
 ## Environment Variables
 
@@ -14,19 +14,19 @@ You can configure the Docker container using the following environment variables
 - `DB_PASSWORD`: The password for the PostgreSQL database. Default is `password`.
 - `DB_NAME`: The name of the PostgreSQL database. Default is `omop`.
 - `SCHEMA_NAME`: The name of the schema to be created/used in the database. Default is `omop`.
-- `VOCAB_DATA_DIR`: The directory containing the vocabulary CSV files. Default is `vocabs`.
+- `DATA_DIR`: The directory containing the data CSV files. Default is `data`.
 
 ## Usage
 
-`docker run -v ./vocabs:/vocabs ghcr.io/AndyRae/omop-lite`
+`docker run -v ./data:/data ghcr.io/AndyRae/omop-lite`
 
 ```yaml
 # docker-compose.yml
 services:
   omop-lite:
-    image: ghcr.io/andyrae/omop-lite
+    image: ghcr.io/health-informatics-uon/omop-lite
     volumes:
-      - ./vocabs:/vocabs
+      - ./data:/data
     depends_on:
       - db
 
@@ -39,9 +39,9 @@ services:
       - "5432:5432"
 ```
 
-## Bring Your Own Vocabularies
+## Bring Your Own Data
 
-You can provide your own data for loading into the tables by placing your CSV files in the `vocabs/` directory. This should contain `.csv` files matching the vocab tables (`DRUG_STRENGTH.csv`, `CONCEPT.csv`, etc.).
+You can provide your own data for loading into the tables by placing your CSV files in the `data/` directory. This should contain `.csv` files matching the data tables (`DRUG_STRENGTH.csv`, `CONCEPT.csv`, etc.).
 
 ## Setup Script
 
@@ -49,4 +49,4 @@ The `setup.sh` script included in the Docker image will:
 
 1. Create the schema if it does not already exist.
 2. Execute the SQL files to set up the database schema, constraints, and indexes.
-3. Load data from the `.csv` files located in the `VOCAB_DATA_DIR`.
+3. Load data from the `.csv` files located in the `DATA_DIR`.

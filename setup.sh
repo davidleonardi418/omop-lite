@@ -6,7 +6,7 @@ DB_PORT="$DB_PORT"
 DB_USER="$DB_USER"
 DB_PASSWORD="$DB_PASSWORD"
 DB_NAME="$DB_NAME"
-VOCAB_DATA_DIR="$VOCAB_DATA_DIR"
+DATA_DIR="$DATA_DIR"
 SCHEMA_NAME="$SCHEMA_NAME"
 
 # SQL files
@@ -42,7 +42,7 @@ for table in "${omop_tables[@]}"; do
     echo 'Loading: ' $table
     table_lower=$(echo "$table" | tr '[:upper:]' '[:lower:]')
     PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" \
-        -c "\COPY ${SCHEMA_NAME}.${table_lower} FROM '${VOCAB_DATA_DIR}/${table}.csv' WITH (FORMAT csv, DELIMITER E'\t', NULL '""', QUOTE E'\b', HEADER, ENCODING 'UTF8')"
+        -c "\COPY ${SCHEMA_NAME}.${table_lower} FROM '${DATA_DIR}/${table}.csv' WITH (FORMAT csv, DELIMITER E'\t', NULL '""', QUOTE E'\b', HEADER, ENCODING 'UTF8')"
 done
 
 # Create pk, constraints, indexes

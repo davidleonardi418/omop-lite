@@ -12,7 +12,7 @@ ENV DB_USER="postgres"
 ENV DB_PASSWORD="password"
 ENV DB_NAME="omop"
 ENV SCHEMA_NAME="omop"
-ENV VOCAB_DATA_DIR="vocabs"
+ENV DATA_DIR="data"
 
 # Copy files
 COPY --chown=appuser:appgroup scripts /scripts
