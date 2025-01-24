@@ -14,6 +14,13 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
+      - DB_HOST="db"
+      - DB_PORT="5432"
+      - DB_USER="postgres"
+      - DB_PASSWORD="password"
+      - DB_NAME="omop"
+      - SCHEMA_NAME="omop"
+      - VOCAB_DATA_DIR="vocabs"
       - SCHEMA_NAME=cdm
     volumes:
       - ./vocabs:/vocabs
