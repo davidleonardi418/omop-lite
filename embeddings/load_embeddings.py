@@ -4,8 +4,8 @@ import duckdb
 
 vector_length = duckdb.sql(
     """
-    SELECT array_length(embeddings[1]) 
-    FROM 'embeddings.parquet'
+    SELECT array_length(embeddings) 
+    FROM 'embeddings/embeddings.parquet'
 """
 ).fetchone()[0]
 
@@ -17,7 +17,7 @@ with duckdb.connect() as con:
     LOAD postgres;
     ATTACH '
     dbname={getenv("DB_NAME")}
-    hostaddr={getenv("DB_HOST")}
+    host={getenv("DB_HOST")}
     port={getenv("DB_PORT")}
     user={getenv("DB_USER")}
     password={getenv("DB_PASSWORD")}
@@ -38,7 +38,7 @@ with duckdb.connect() as con:
     SET embedding = e.embeddings
     FROM (
         SELECT concept_id, embeddings 
-        FROM 'embeddings.parquet'
+        FROM 'embeddings/embeddings.parquet'
     ) e
     WHERE c.concept_id = e.concept_id
     """
