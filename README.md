@@ -15,6 +15,7 @@ You can configure the Docker container using the following environment variables
 - `DB_NAME`: The name of the PostgreSQL database. Default is `omop`.
 - `SCHEMA_NAME`: The name of the schema to be created/used in the database. Default is `omop`.
 - `DATA_DIR`: The directory containing the data CSV files. Default is `data`.
+- `SYNTHETIC`: Load synthetic data (boolean). Default is `false`
 
 ## Usage
 
@@ -39,9 +40,24 @@ services:
       - "5432:5432"
 ```
 
+## Synthetic Data
+
+If you need synthetic data, some is provided in the `synthetic` directory. It provides a small amount of data to load quickly.
+To load the synthetic data, run the container with the `SYNTHETIC` environment variable set to `true`.
+
+This data only provides the following tables:
+
+- `CONCEPT`
+- `CONDITION_OCCURRENCE`
+- `MEASUREMENT`
+- `OBSERVATION`
+- `PERSON`
+
 ## Bring Your Own Data
 
-You can provide your own data for loading into the tables by placing your CSV files in the `data/` directory. This should contain `.csv` files matching the data tables (`DRUG_STRENGTH.csv`, `CONCEPT.csv`, etc.).
+You can provide your own data for loading into the tables by placing your files in the `data/` directory. This should contain `.csv` files matching the data tables (`DRUG_STRENGTH.csv`, `CONCEPT.csv`, etc.).
+
+To match the vocabulary files from Athena, this data should be tab-separated, but as a `.csv` file extension.
 
 ## Setup Script
 
