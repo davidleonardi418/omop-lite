@@ -19,7 +19,7 @@ You can configure the Docker container using the following environment variables
 
 ## Usage
 
-`docker run -v ./data:/data ghcr.io/AndyRae/omop-lite`
+`docker run -v ./data:/data ghcr.io/health-informatics-uon/omop-lite`
 
 ```yaml
 # docker-compose.yml
