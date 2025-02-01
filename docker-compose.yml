@@ -7,6 +7,7 @@ services:
       dockerfile: Dockerfile
     environment:
       - SCHEMA_NAME=cdm
+      - SYNTHETIC=true
     volumes:
       - ./data:/data
     depends_on:
