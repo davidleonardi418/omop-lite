@@ -35,32 +35,13 @@ parquet_file = pq.ParquetFile("embeddings/embeddings.parquet")
 
 # Each row will occupy 8514-ish bytes at the end
 # To keep the memory usage below 4 Gb, setting the batch size to 200_000
-for batch in tqdm(parquet_file.iter_batches(batch_size=200000)):
-    df = (
-        pl.DataFrame(batch)
-        .select(["concept_id", "embeddings"])
-        .with_columns(
-            pl.format(
-                "[{}]",
-                pl.col("embeddings")
-                .cast(pl.List(pl.String))
-                .list.join(",")
-                .alias("embeddings"),
-            )
-        )
-    )
-    chunk_size = 10000
-    update_query = """
-        UPDATE cdm.concept
-            SET embeddings = %s
-            WHERE concept_id = %s"""
+for batch in parquet_file.iter_batches(batch_size=200000):
+    with cursor.copy(
+        "COPY cdm.bge_embeddings (concept_id, embedding) FROM STDIN WITH (FORMAT BINARY)"
+    ) as copy:
+        # use set_types for binary copy
+        # https://www.psycopg.org/psycopg3/docs/basic/copy.html#binary-copy
+        copy.set_types(["int4", "vector"])
 
-    for row_start in range(0, len(df), chunk_size):
-        d_list = [
-            (row[1], row[0])
-            for row in df[row_start : row_start + chunk_size].iter_rows()
-        ]
-        cursor.executemany(update_query, d_list)
-        conn.commit()
-        print(f"Committed {chunk_size} entries")
-conn.close()
+        for entry in zip(batch[0], batch[2]):
+            copy.write_row((entry[0].as_py(), entry[1].as_py()))
