@@ -13,7 +13,7 @@ You can configure the Docker container using the following environment variables
 - `DB_USER`: The username for the PostgreSQL database. Default is `postgres`.
 - `DB_PASSWORD`: The password for the PostgreSQL database. Default is `password`.
 - `DB_NAME`: The name of the PostgreSQL database. Default is `omop`.
-- `SCHEMA_NAME`: The name of the schema to be created/used in the database. Default is `omop`.
+- `SCHEMA_NAME`: The name of the schema to be created/used in the database. Default is `public`.
 - `DATA_DIR`: The directory containing the data CSV files. Default is `data`.
 - `SYNTHETIC`: Load synthetic data (boolean). Default is `false`
 
