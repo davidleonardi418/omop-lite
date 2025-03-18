@@ -7,8 +7,9 @@ services:
       dockerfile: Dockerfile
     environment:
       - SCHEMA_NAME=cdm
+      - SYNTHETIC=true
     volumes:
-      - ./vocabs:/vocabs
+      - ./data:/data
     depends_on:
       - db
 

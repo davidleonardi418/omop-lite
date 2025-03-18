@@ -1,11 +1,16 @@
 #!/bin/bash
 
 # Required variables:
-# DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME, VOCAB_DATA_DIR, SCHEMA_NAME
+# DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME, VOCAB_DATA_DIR, SCHEMA_NAME, SYNTHETIC
+
+# If synthetic data is requested, use the synthetic data directory
+if [ "$SYNTHETIC" = "true" ]; then
+    DATA_DIR="/synthetic"
+fi
 
 # SQL files
 sql_files=(primary-keys.sql constraints.sql indices.sql)
-vocab_tables=(DRUG_STRENGTH CONCEPT CONCEPT_RELATIONSHIP CONCEPT_ANCESTOR CONCEPT_SYNONYM VOCABULARY RELATIONSHIP CONCEPT_CLASS DOMAIN)
+omop_tables=(CDM_SOURCE DRUG_STRENGTH CONCEPT CONCEPT_RELATIONSHIP CONCEPT_ANCESTOR CONCEPT_SYNONYM CONDITION_ERA CONDITION_OCCURRENCE DEATH DRUG_ERA DRUG_EXPOSURE DRUG_STRENGTH LOCATION MEASUREMENT OBSERVATION OBSERVATION_PERIOD PERSON PROCEDURE_OCCURRENCE VOCABULARY VISIT_OCCURRENCE RELATIONSHIP CONCEPT_CLASS DOMAIN)
 
 # Directory paths
 script_dir="/scripts"
@@ -32,11 +37,11 @@ PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB
 rm "$temp_ddl"
 
 echo "Loading data.."
-for table in "${vocab_tables[@]}"; do
+for table in "${omop_tables[@]}"; do
     echo 'Loading: ' $table
     table_lower=$(echo "$table" | tr '[:upper:]' '[:lower:]')
     PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" \
-        -c "\COPY ${SCHEMA_NAME}.${table_lower} FROM '${VOCAB_DATA_DIR}/${table}.csv' WITH (FORMAT csv, DELIMITER E'\t', NULL '""', QUOTE E'\b', HEADER, ENCODING 'UTF8')"
+        -c "\COPY ${SCHEMA_NAME}.${table_lower} FROM '${DATA_DIR}/${table}.csv' WITH (FORMAT csv, DELIMITER E'\t', NULL '""', QUOTE E'\b', HEADER, ENCODING 'UTF8')"
 done
 
 # Create pk, constraints, indexes
