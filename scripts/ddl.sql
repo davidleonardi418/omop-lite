@@ -1,5 +1,4 @@
 --postgresql CDM DDL Specification for OMOP Common Data Model 5.4
---(except that I've monkeyed about with it a bit)
 --HINT DISTRIBUTE ON KEY (person_id)
 CREATE TABLE @cdmDatabaseSchema.person (
 			person_id integer NOT NULL,
@@ -418,7 +417,6 @@ CREATE TABLE @cdmDatabaseSchema.cdm_source (
 CREATE TABLE @cdmDatabaseSchema.concept (
 			concept_id integer NOT NULL,
 			concept_name varchar(255) NOT NULL,
-      concept_fts tsvector GENERATED ALWAYS AS (to_tsvector('english', concept_name)) STORED,
 			domain_id varchar(20) NOT NULL,
 			vocabulary_id varchar(20) NOT NULL,
 			concept_class_id varchar(20) NOT NULL,

@@ -8,6 +8,7 @@ DB_PASSWORD="$DB_PASSWORD"
 DB_NAME="$DB_NAME"
 VOCAB_DATA_DIR="$VOCAB_DATA_DIR"
 SCHEMA_NAME="$SCHEMA_NAME"
+FTS_CREATE="$FTS_CREATE"
 
 # SQL files
 sql_files=(primary-keys.sql constraints.sql indices.sql)
@@ -61,3 +62,13 @@ for sql_file in "${sql_files[@]}"; do
 done
 
 echo "OMOP CDM creation finished."
+
+if [ "$FTS_CREATE" ]; then
+  echo "Adding full-text search on concept table"
+  input_file="${script_dir}/fts.sql"
+  temp_file="${temp_dir}/temp_fts.sql"
+
+  sed "s/@cdmDatabaseSchema/${SCHEMA_NAME}/g" "$input_file" > "$temp_file"
+  PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -f "$temp_file"
+  rm "$temp_file"
+fi
