@@ -2,7 +2,6 @@ from os import getenv
 import pyarrow.parquet as pq
 import polars as pl
 from pgvector.psycopg import register_vector
-from tqdm import tqdm
 import psycopg
 
 uri = f"postgresql://{getenv('DB_USER')}:{getenv('DB_PASSWORD')}@{getenv('DB_HOST')}:{getenv('DB_PORT')}/{getenv('DB_NAME')}"
@@ -21,12 +20,25 @@ register_vector(conn)
 print("Registered vector type")
 cursor = conn.cursor()
 
+# This drops the table, then creates a new one to fill with embeddings,
+#so it should only be run when you're building the database for the first time
+#or if you want to replace your embeddings
+#if we want to load multiple embeddings datasets, we can make the table name configurable from the environment
+
 cursor.execute(
-    f"""
-    ALTER TABLE cdm.concept
-    ADD COLUMN IF NOT EXISTS embeddings vector({vector_length});
-    """
-)
+        """
+        DROP TABLE IF EXISTS cdm.embeddings;
+        """
+        )
+
+cursor.execute(
+        f"""
+        CREATE TABLE cdm.embeddings (
+            concept_id  int
+            embeddings  vector({vector_length})
+        );
+        """
+        )
 
 conn.commit()
 
@@ -37,7 +49,7 @@ parquet_file = pq.ParquetFile("embeddings/embeddings.parquet")
 # To keep the memory usage below 4 Gb, setting the batch size to 200_000
 for batch in parquet_file.iter_batches(batch_size=200000):
     with cursor.copy(
-        "COPY cdm.bge_embeddings (concept_id, embedding) FROM STDIN WITH (FORMAT BINARY)"
+        "COPY cdm.embeddings (concept_id, embedding) FROM STDIN WITH (FORMAT BINARY)"
     ) as copy:
         # use set_types for binary copy
         # https://www.psycopg.org/psycopg3/docs/basic/copy.html#binary-copy
