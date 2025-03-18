@@ -22,6 +22,7 @@ services:
       - SCHEMA_NAME=omop
       - VOCAB_DATA_DIR=vocabs
       - SCHEMA_NAME=cdm
+      - FTS_CREATE=yes_please
     volumes:
       - ./vocabs:/vocabs
     depends_on:
