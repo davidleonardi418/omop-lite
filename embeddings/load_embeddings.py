@@ -25,12 +25,19 @@ cursor = conn.cursor()
 #or if you want to replace your embeddings
 #if we want to load multiple embeddings datasets, we can make the table name configurable from the environment
 
+print("Loading pgvector extension")
+cursor.execute(
+        """
+        CREATE EXTENSION vector;
+        """
+        )
+
 cursor.execute(
         """
         DROP TABLE IF EXISTS cdm.embeddings;
         """
         )
-
+print(f"Creating a table for {vector_length} dimensional vectors")
 cursor.execute(
         f"""
         CREATE TABLE cdm.embeddings (
@@ -47,6 +54,7 @@ parquet_file = pq.ParquetFile("embeddings/embeddings.parquet")
 
 # Each row will occupy 8514-ish bytes at the end
 # To keep the memory usage below 4 Gb, setting the batch size to 200_000
+print("Copying in vectors")
 for batch in parquet_file.iter_batches(batch_size=200000):
     with cursor.copy(
         "COPY cdm.embeddings (concept_id, embedding) FROM STDIN WITH (FORMAT BINARY)"
@@ -57,3 +65,4 @@ for batch in parquet_file.iter_batches(batch_size=200000):
 
         for entry in zip(batch[0], batch[2]):
             copy.write_row((entry[0].as_py(), entry[1].as_py()))
+print("Vectors in!")
