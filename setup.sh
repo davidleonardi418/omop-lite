@@ -1,14 +1,7 @@
 #!/bin/bash
 
-# Parse variables
-DB_HOST="$DB_HOST"
-DB_PORT="$DB_PORT"
-DB_USER="$DB_USER"
-DB_PASSWORD="$DB_PASSWORD"
-DB_NAME="$DB_NAME"
-VOCAB_DATA_DIR="$VOCAB_DATA_DIR"
-SCHEMA_NAME="$SCHEMA_NAME"
-FTS_CREATE="$FTS_CREATE"
+# Required variables:
+# DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME, VOCAB_DATA_DIR, SCHEMA_NAME
 
 # SQL files
 sql_files=(primary-keys.sql constraints.sql indices.sql)
@@ -63,7 +56,7 @@ done
 
 echo "OMOP CDM creation finished."
 
-if [ "$FTS_CREATE" ]; then
+if [ -n "$FTS_CREATE" ]; then
   echo "Adding full-text search on concept table"
   input_file="${script_dir}/fts.sql"
   temp_file="${temp_dir}/temp_fts.sql"
