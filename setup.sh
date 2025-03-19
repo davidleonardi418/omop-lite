@@ -22,13 +22,31 @@ echo "Database is up - continuing.."
 
 # Check if the schema already exists
 schema_exists=$(PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -tAc "SELECT 1 FROM information_schema.schemata WHERE schema_name = '${SCHEMA_NAME}'")
-if [ "$schema_exists" ]; then
-    echo "Schema '${SCHEMA_NAME}' already exists. Skipping CDM creation."
-    exit 0  # Exit gracefully
+
+# Check if the schema is `public`
+if [ "$SCHEMA_NAME" != "public" ]; then
+
+    # if schema is not `public` and already exists, assume we put it there and have nothing to do
+    if [ "$schema_exists" ]; then
+        echo "Schema '${SCHEMA_NAME}' already exists. Skipping CDM creation."
+        exit 0  # Exit gracefully
+    fi
+
 fi
 
-echo "Creating schema.."
-PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -c "CREATE SCHEMA IF NOT EXISTS ${SCHEMA_NAME};"
+# TODO: If schema IS `public`, instead perform table checks?
+# for table in "${omop_tables[@]}"; do
+#     echo 'Loading: ' $table
+#     table_lower=$(echo "$table" | tr '[:upper:]' '[:lower:]')
+#     PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" \
+#         -c "\COPY ${SCHEMA_NAME}.${table_lower} FROM '${DATA_DIR}/${table}.csv' WITH (FORMAT csv, DELIMITER E'\t', NULL '""', QUOTE E'\b', HEADER, ENCODING 'UTF8')"
+# done
+
+# Create schema only if it doesn't exist (even for `public`, though this should be incredibly rare)
+if [ -z "$schema_exists" ]; then
+    echo "Creating schema.."
+    PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -c "CREATE SCHEMA IF NOT EXISTS ${SCHEMA_NAME};"
+fi
 
 echo "Creating tables.."
 temp_ddl="${temp_dir}/temp_ddl.sql"
