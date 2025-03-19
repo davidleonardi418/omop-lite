@@ -34,14 +34,6 @@ if [ "$SCHEMA_NAME" != "public" ]; then
 
 fi
 
-# TODO: If schema IS `public`, instead perform table checks?
-# for table in "${omop_tables[@]}"; do
-#     echo 'Loading: ' $table
-#     table_lower=$(echo "$table" | tr '[:upper:]' '[:lower:]')
-#     PGPASSWORD="$DB_PASSWORD" psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" \
-#         -c "\COPY ${SCHEMA_NAME}.${table_lower} FROM '${DATA_DIR}/${table}.csv' WITH (FORMAT csv, DELIMITER E'\t', NULL '""', QUOTE E'\b', HEADER, ENCODING 'UTF8')"
-# done
-
 # Create schema only if it doesn't exist (even for `public`, though this should be incredibly rare)
 if [ -z "$schema_exists" ]; then
     echo "Creating schema.."
