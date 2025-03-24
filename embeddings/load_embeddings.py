@@ -41,7 +41,7 @@ print(f"Creating a table for {vector_length} dimensional vectors")
 cursor.execute(
         f"""
         CREATE TABLE cdm.embeddings (
-            concept_id  int
+            concept_id  int,
             embeddings  vector({vector_length})
         );
         """
