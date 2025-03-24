@@ -15,22 +15,22 @@ vector_length = (
 )
 
 conn = psycopg.connect(uri)
-print("Connected to database\n")
-register_vector(conn)
-print("Registered vector type")
 cursor = conn.cursor()
-
-# This drops the table, then creates a new one to fill with embeddings,
-#so it should only be run when you're building the database for the first time
-#or if you want to replace your embeddings
-#if we want to load multiple embeddings datasets, we can make the table name configurable from the environment
-
+print("Connected to database\n")
 print("Loading pgvector extension")
 cursor.execute(
         """
         CREATE EXTENSION vector;
         """
         )
+
+register_vector(conn)
+print("Registered vector type")
+
+# This drops the table, then creates a new one to fill with embeddings,
+#so it should only be run when you're building the database for the first time
+#or if you want to replace your embeddings
+#if we want to load multiple embeddings datasets, we can make the table name configurable from the environment
 
 cursor.execute(
         """
