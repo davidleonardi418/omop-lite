@@ -1,6 +1,6 @@
 # omop-lite
 
-A small container to get an OMOP CDM Postgres database running quickly.
+A small container to get an OMOP CDM database running quickly, with support for both PostgreSQL and SQL Server.
 
 Drop your data into `data/`, and run the container.
 
@@ -8,11 +8,12 @@ Drop your data into `data/`, and run the container.
 
 You can configure the Docker container using the following environment variables:
 
-- `DB_HOST`: The hostname of the PostgreSQL database. Default is `db`.
-- `DB_PORT`: The port number of the PostgreSQL database. Default is `5432`.
-- `DB_USER`: The username for the PostgreSQL database. Default is `postgres`.
-- `DB_PASSWORD`: The password for the PostgreSQL database. Default is `password`.
-- `DB_NAME`: The name of the PostgreSQL database. Default is `omop`.
+- `DB_HOST`: The hostname of the database. Default is `db`.
+- `DB_PORT`: The port number of the database. Default is `5432`.
+- `DB_USER`: The username for the database. Default is `postgres`.
+- `DB_PASSWORD`: The password for the database. Default is `password`.
+- `DB_NAME`: The name of the database. Default is `omop`.
+- `DIALECT`: The type of database to use. Default is `postgresql`, but can also be `mssql`.
 - `SCHEMA_NAME`: The name of the schema to be created/used in the database. Default is `public`.
 - `DATA_DIR`: The directory containing the data CSV files. Default is `data`.
 - `SYNTHETIC`: Load synthetic data (boolean). Default is `false`
@@ -68,11 +69,14 @@ The `setup.sh` script included in the Docker image will:
 3. Load data from the `.csv` files located in the `DATA_DIR`.
 
 ## Text search OMOP
+
 ### Full-text search
+
 Adding a tsvector column to the concept table and an index on that column makes full-text search queries on the concept table run much faster.
 This can be configured by setting `FTS_CREATE` to be non-empty in the environment.
 
 ### Vector search
+
 Postgres does vector search too!
 To enable this on omop-lite, you can compose the `compose-omop-ts.yml` with
 
