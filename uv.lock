@@ -110,7 +110,7 @@ wheels = [
 
 [[package]]
 name = "omop-lite"
-version = "0.0.10"
+version = "0.0.11"
 source = { editable = "." }
 dependencies = [
     { name = "psycopg2-binary" },
