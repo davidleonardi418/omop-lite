@@ -1,4 +1,3 @@
 owner: health-informatics-uon
 git-repo: omop-lite
-charts-repo: https://health-informatics-uon.github.io/omop-lite
 packages-with-index: true 
