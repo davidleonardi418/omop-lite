@@ -1,10 +1,11 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: Job
 metadata:
   name: {{ include "omop-lite.fullname" . }}
   labels:
     {{- include "omop-lite.labels" . | nindent 4 }}
 spec:
+  ttlSecondsAfterFinished: 3600
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
@@ -76,3 +77,22 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      env:
+        - name: DB_HOST
+          value: {{ .Values.env.dbHost | quote }}
+        - name: DB_PORT
+          value: {{ .Values.env.dbPort | quote }}
+        - name: DB_USER
+          value: {{ .Values.env.dbUser | quote }}
+        - name: DB_PASSWORD
+          value: {{ .Values.env.dbPassword | quote }}
+        - name: DB_NAME
+          value: {{ .Values.env.dbName | quote }}
+        - name: DIALECT
+          value: {{ .Values.env.dialect | quote }}
+        - name: SCHEMA_NAME
+          value: {{ .Values.env.schemaName | quote }}
+        - name: DATA_DIR
+          value: {{ .Values.env.dataDir | quote }}
+        - name: SYNTHETIC
+          value: {{ .Values.env.synthetic | quote }}
