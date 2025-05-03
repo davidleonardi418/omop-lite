@@ -5,7 +5,7 @@ image:
 
 env:
   dbHost: your-postgres-service
-  dbPort: 5432
+  dbPort: "5432"
   dbUser: postgres
   dbPassword: password
   dbName: omop
@@ -13,6 +13,20 @@ env:
   schemaName: public
   dataDir: /data
   synthetic: true
+
+backoffLimit: 1
+
+serviceAccount:
+  create: false
+  automount: false
+
+# Placeholder values to prevent template errors
+ingress:
+  enabled: false
+
+service:
+  type: ClusterIP
+  port: 8080
 
 persistence:
   enabled: false

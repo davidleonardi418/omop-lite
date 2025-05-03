@@ -20,3 +20,14 @@
   echo "Visit http://127.0.0.1:8080 to use your application"
   kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:$CONTAINER_PORT
 {{- end }}
+
+1. The OMOP Lite loader job has been created. You can monitor its progress with:
+
+   kubectl get jobs -n {{ .Release.Namespace }}
+   kubectl get pods -n {{ .Release.Namespace }} -l job-name={{ include "omop-lite.fullname" . }}
+
+2. To view the logs of the job:
+
+   kubectl logs -n {{ .Release.Namespace }} -l job-name={{ include "omop-lite.fullname" . }}
+
+3. The job will automatically clean up after 1 hour (ttlSecondsAfterFinished: 3600)

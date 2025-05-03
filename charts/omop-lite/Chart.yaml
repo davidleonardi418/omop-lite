@@ -1,6 +1,6 @@
 apiVersion: v2
 name: omop-lite
-description: A Helm chart for deploying OMOP Lite
+description: A Helm chart for deploying OMOP Lite as a Kubernetes Job to create OMOP CDM
 
 # A chart can be either an 'application' or a 'library' chart.
 #

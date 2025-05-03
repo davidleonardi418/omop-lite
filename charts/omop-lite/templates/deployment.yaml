@@ -1,4 +1,4 @@
-apiVersion: apps/v1
+apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ include "omop-lite.fullname" . }}
@@ -6,12 +6,7 @@ metadata:
     {{- include "omop-lite.labels" . | nindent 4 }}
 spec:
   ttlSecondsAfterFinished: 3600
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
-  {{- end }}
-  selector:
-    matchLabels:
-      {{- include "omop-lite.selectorLabels" . | nindent 6 }}
+  backoffLimit: {{ .Values.backoffLimit }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -41,58 +36,27 @@ spec:
           {{- end }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - name: http
-              containerPort: {{ .Values.service.port }}
-              protocol: TCP
-          {{- with .Values.livenessProbe }}
-          livenessProbe:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.readinessProbe }}
-          readinessProbe:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
           {{- with .Values.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.volumeMounts }}
-          volumeMounts:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-      {{- with .Values.volumes }}
-      volumes:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      env:
-        - name: DB_HOST
-          value: {{ .Values.env.dbHost | quote }}
-        - name: DB_PORT
-          value: {{ .Values.env.dbPort | quote }}
-        - name: DB_USER
-          value: {{ .Values.env.dbUser | quote }}
-        - name: DB_PASSWORD
-          value: {{ .Values.env.dbPassword | quote }}
-        - name: DB_NAME
-          value: {{ .Values.env.dbName | quote }}
-        - name: DIALECT
-          value: {{ .Values.env.dialect | quote }}
-        - name: SCHEMA_NAME
-          value: {{ .Values.env.schemaName | quote }}
-        - name: DATA_DIR
-          value: {{ .Values.env.dataDir | quote }}
-        - name: SYNTHETIC
-          value: {{ .Values.env.synthetic | quote }}
+          env:
+            - name: DB_HOST
+              value: {{ .Values.env.dbHost | quote }}
+            - name: DB_PORT
+              value: {{ .Values.env.dbPort | quote }}
+            - name: DB_USER
+              value: {{ .Values.env.dbUser | quote }}
+            - name: DB_PASSWORD
+              value: {{ .Values.env.dbPassword | quote }}
+            - name: DB_NAME
+              value: {{ .Values.env.dbName | quote }}
+            - name: DIALECT
+              value: {{ .Values.env.dialect | quote }}
+            - name: SCHEMA_NAME
+              value: {{ .Values.env.schemaName | quote }}
+            - name: DATA_DIR
+              value: {{ .Values.env.dataDir | quote }}
+            - name: SYNTHETIC
+              value: {{ .Values.env.synthetic | quote }}
+      restartPolicy: Never
