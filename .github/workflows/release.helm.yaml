@@ -8,6 +8,10 @@ on:
     #   - 'charts/omop-lite/**'
   workflow_dispatch:
 
+# Add permissions block
+permissions:
+  contents: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
