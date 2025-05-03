@@ -1,6 +1,6 @@
 image:
   repository: ghcr.io/health-informatics-uon/omop-lite
-  tag: 0.0.11
+  tag: v0.0.11
   pullPolicy: IfNotPresent
 
 env:

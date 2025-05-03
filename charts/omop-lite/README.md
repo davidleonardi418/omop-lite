@@ -35,7 +35,7 @@ The following table lists the configurable parameters of the OMOP Lite chart and
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `image.repository` | Image repository | `ghcr.io/health-informatics-uon/omop-lite` |
-| `image.tag` | Image tag | `0.0.11` |
+| `image.tag` | Image tag (should be a specific version, never use 'latest') | `v0.0.11` |
 | `image.pullPolicy` | Image pull policy | `IfNotPresent` |
 | `env.dbHost` | Database host | `your-postgres-service` |
 | `env.dbPort` | Database port | `"5432"` |
@@ -78,4 +78,12 @@ To use these values:
 
 ```bash
 helm install omop-lite ./charts/omop-lite -f charts/omop-lite/values-test.yaml -n shared
-``` 
+```
+
+## Image Versioning
+
+This chart uses semantic versioning for image tags (e.g., `v0.0.11`). Always use specific version tags rather than `latest` to ensure:
+- Deterministic deployments
+- Proper version tracking
+- Reliable rollbacks
+- Consistent behavior across environments 
