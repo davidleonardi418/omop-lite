@@ -3,9 +3,9 @@ name: Release Helm Chart
 on:
   push:
     branches:
-      - main
-    paths:
-      - 'charts/omop-lite/**'
+      - feat/helm-charts
+    # paths:
+    #   - 'charts/omop-lite/**'
   workflow_dispatch:
 
 # Add permissions block
@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
