@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - feat/helm-charts
-    paths:
-      - 'charts/omop-lite/**'
+    # paths:
+    #   - 'charts/omop-lite/**'
   workflow_dispatch:
 
 jobs:
