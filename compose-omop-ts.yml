@@ -1,15 +1,22 @@
 name: omop-ts
 
 services:
-   omop-ts:
+  omop-ts:
     image: pgvector/pgvector:pg17
     environment:
       - POSTGRES_DB=omop
       - POSTGRES_PASSWORD=password
     ports:
       - "5432:5432"
-   
-   omop-lite:
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  omop-lite:
     build:
       context: .
       dockerfile: Dockerfile
@@ -21,22 +28,41 @@ services:
     volumes:
       - ./data:/data
     depends_on:
-      - omop-ts
-   
-   embeddings:
-     build:
-       context: ./embeddings
-       dockerfile: Dockerfile
-     environment:
+      omop-ts:
+        condition: service_healthy
+
+  embeddings:
+    build:
+      context: ./embeddings
+      dockerfile: Dockerfile
+    environment:
       - DB_HOST=omop-ts
       - DB_PORT=5432
       - DB_USER=postgres
       - DB_PASSWORD=password
       - DB_NAME=omop
       - SCHEMA_NAME=cdm
-     volumes:
-       - ./embeddings:/embeddings:ro
-     depends_on:
-       omop-lite:
-         condition: service_completed_successfully
+    volumes:
+      - ./embeddings:/embeddings:ro
+    depends_on:
+      omop-lite:
+        condition: service_completed_successfully
 
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: omop-pgadmin
+    restart: unless-stopped
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@mydomain.com
+      - PGADMIN_DEFAULT_PASSWORD=AnotherStrongPassw0rd!%
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin # Persist pgAdmin settings and saved servers
+    ports:
+      - "8080:80" # Expose pgAdmin web UI on host port 8080
+    depends_on:
+      omop-ts:
+        condition: service_healthy
+
+volumes:
+  pg-data:
+  pgadmin_data:
